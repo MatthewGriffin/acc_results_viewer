@@ -1,0 +1,19 @@
+{
+  "name": "wasm-template-rust",
+  "collaborators": [
+    "sn99 <siddharthn.099@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "wasm_template_rust_bg.wasm",
+    "wasm_template_rust.js",
+    "wasm_template_rust_bg.js",
+    "wasm_template_rust.d.ts"
+  ],
+  "module": "wasm_template_rust.js",
+  "types": "wasm_template_rust.d.ts",
+  "sideEffects": [
+    "./wasm_template_rust.js",
+    "./snippets/*"
+  ]
+}
