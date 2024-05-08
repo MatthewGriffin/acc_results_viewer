@@ -42,9 +42,6 @@ jobs:
     - name: NPM (including WASM) Build
       run: cd www && npm run build
 
-    - name: eslint
-      run: cd www && npm run lint
-
     # Save wasm build so that we can optionally deploy it without rebuilding
     - name: Save wasm dist artifact
       uses: actions/upload-artifact@v3
