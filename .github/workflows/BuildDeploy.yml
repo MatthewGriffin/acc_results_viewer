@@ -69,7 +69,7 @@ jobs:
     - name: Download wasm dist artifact
       uses: actions/download-artifact@v3
       with:
-        name: acc-web-dist
+        name: www-dist
         path: dist-for-deploy
 
     - name: Deploy to GitHub Pages
