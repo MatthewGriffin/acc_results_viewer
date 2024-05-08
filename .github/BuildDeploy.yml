@@ -1,0 +1,84 @@
+name: WASM Build, Test, Deploy
+
+# Largely taken from
+# https://github.com/kpreid/all-is-cubes/blob/ae36fc248a6e09bb796dc221e6c6255699fda43d/.github/workflows/aic.yml
+
+permissions: {}
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+          target: wasm32-unknown-unknown
+
+    - uses: Swatinem/rust-cache@v2
+
+    - name: Install wasm-pack
+      # Use workspace target directory for cargo install's build,
+      # so that the build of wasm-pack will be cached by rust-cache action.
+      run: CARGO_TARGET_DIR=`pwd`/target cargo install wasm-pack
+
+    - name: NPM install (latest)
+      run: cd www && npm install npm@latest
+
+    - name: Run Cargo tests
+      run: cargo test --workspace
+
+    - name: NPM (including WASM) Build
+      run: cd www && npm run build
+
+    - name: eslint
+      run: cd www && npm run lint
+
+    # Save wasm build so that we can optionally deploy it without rebuilding
+    - name: Save wasm dist artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: www-dist
+        path: www/dist
+        if-no-files-found: error
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    # Do this only if we are pushing to main, not to pull requests.
+    # (Or if we're on a special 'pages-alt' branch, so we can experiment with
+    # deployment before pushing to main.)
+    #
+    # Caution: GitHub's parsing is weird around multiline expressions so just don't.
+    # https://github.community/t/how-to-write-multi-line-condition-in-if/128477
+    if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/pages-alt') }}
+
+    steps:
+
+    - name: Download wasm dist artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: acc-web-dist
+        path: dist-for-deploy
+
+    - name: Deploy to GitHub Pages
+      uses: crazy-max/ghaction-github-pages@v3
+      with:
+        target_branch: gh-pages
+        build_dir: dist-for-deploy
+        keep_history: false
+        jekyll: false
