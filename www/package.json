@@ -25,6 +25,7 @@
   "license": "(MIT OR Apache-2.0)",
   "homepage": "https://github.com/sn99/wasm-template-rust/blob/master/README.md",
   "dependencies": {
+    "lint": "^0.8.19",
     "wasm-template-rust": "file:../pkg"
   },
   "devDependencies": {
