@@ -60,3 +60,11 @@ matrix:
 notifications:
   email:
     on_success: never
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $ACCESS_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep_history: true
+  on:
+    branch: main
