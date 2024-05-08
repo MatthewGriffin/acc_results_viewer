@@ -79,3 +79,5 @@ jobs:
         build_dir: dist-for-deploy
         keep_history: false
         jekyll: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}
